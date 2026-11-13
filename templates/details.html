@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel detail-panel {{ item.status|lower }}">
+    <div class="detail-head">
+        <span class="badge {{ item.status|lower }}">{{ item.status }}</span>
+        <h2>{{ item.item_name }}</h2>
+        <span class="chip">{{ item.category }}</span>
+    </div>
+    <dl class="detail-list">
+        <div class="full">
+            <dt>Description</dt>
+            <dd>{{ item.description }}</dd>
+        </div>
+        <div>
+            <dt>Location</dt>
+            <dd>{{ item.location }}</dd>
+        </div>
+        <div>
+            <dt>Date</dt>
+            <dd>{{ item.date_found }}</dd>
+        </div>
+        <div>
+            <dt>Reported By</dt>
+            <dd>{{ item.owner_name }}</dd>
+        </div>
+        <div>
+            <dt>Contact</dt>
+            <dd>{{ item.contact }}</dd>
+        </div>
+    </dl>
+    <div class="actions">
+        <a class="btn secondary" href="{{ url_for('index') }}">Back</a>
+        {% if item.status == 'Found' %}
+        <a class="btn" href="{{ url_for('claim', item_id=item.id) }}">This is mine - Claim</a>
+        {% endif %}
+        {% if session.get('is_admin') %}
+        <a class="btn gold" href="{{ url_for('edit', item_id=item.id) }}">Edit</a>
+        {% if item.status != 'Returned' %}
+        <form method="post" action="{{ url_for('mark_returned', item_id=item.id) }}">
+            <button class="btn" type="submit">Mark as Returned</button>
+        </form>
+        {% endif %}
+        <form method="post" action="{{ url_for('delete', item_id=item.id) }}">
+            <button class="btn danger" type="submit">Delete</button>
+        </form>
+        {% endif %}
+    </div>
+    {% if not session.get('is_admin') %}
+    <p class="muted note">Only an admin can edit, return or delete items.</p>
+    {% endif %}
+
+    {% if claims %}
+    <h3 class="claims-title">{{ 'Claims on this item' if session.get('is_admin') else 'Your claims' }}</h3>
+    {% if session.get('is_admin') and verification %}
+    <p class="muted note">Question: {{ verification.question }} &middot; Expected answer: <strong>{{ verification.answer
+            }}</strong></p>
+    {% elif session.get('is_admin') %}
+    <p class="muted note">No expected answer was set for this item. Verify the claim manually.</p>
+    {% endif %}
+    {% for c in claims %}
+    <div class="claim">
+        <div class="claim-head">
+            <strong>{{ c.claimant_name }}</strong>
+            <span class="badge {{ c.status|lower }}">{{ c.status }}</span>
+        </div>
+        <p class="muted">{{ c.contact }} &middot; {{ c.created_at }}</p>
+        {% if session.get('is_admin') %}
+        <p>Answer given: <strong>{{ c.answer }}</strong></p>
+        {% if c.status == 'Pending' %}
+        <div class="actions">
+            <form method="post" action="{{ url_for('approve_claim', claim_id=c.id) }}">
+                <button class="btn" type="submit">Approve</button>
+            </form>
+            <form method="post" action="{{ url_for('reject_claim', claim_id=c.id) }}">
+                <button class="btn danger" type="submit">Reject</button>
+            </form>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

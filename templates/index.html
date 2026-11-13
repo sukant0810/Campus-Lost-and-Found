@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block hero %}
+<section class="hero">
+    <div class="container">
+        <h1>Lost something on campus?<br>Found something that isn't yours?</h1>
+        <p>Report it, search for it, and help items find their way back to their owners.</p>
+        <div class="hero-actions">
+            <a class="btn gold" href="{{ url_for('report', kind='lost') }}">Report Lost Item</a>
+            <a class="btn outline-light" href="{{ url_for('report', kind='found') }}">Report Found Item</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<div class="stats">
+    <a class="stat" href="{{ url_for('index') }}"><strong>{{ total }}</strong><span>Total</span></a>
+    {% for s in statuses %}
+    <a class="stat {{ s|lower }}" href="{{ url_for('index', status=s) }}"><strong>{{ stats[s] }}</strong><span>{{ s
+            }}</span></a>
+    {% endfor %}
+</div>
+
+<form class="panel search" method="get" action="{{ url_for('index') }}">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search by item, category or location">
+    <select name="status">
+        <option value="">All Status</option>
+        {% for s in statuses %}
+        <option value="{{ s }}" {% if s==status %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+    </select>
+    <button class="btn" type="submit">Search</button>
+    <a class="btn secondary" href="{{ url_for('index') }}">Reset</a>
+</form>
+
+<h2 class="section-title">Items <span class="count">{{ count }}</span></h2>
+
+{% if items %}
+<div class="grid">
+    {% for item in items %}
+    <article class="item-card {{ item.status|lower }}">
+        <div class="item-top">
+            <span class="badge {{ item.status|lower }}">{{ item.status }}</span>
+            <span class="chip">{{ item.category }}</span>
+        </div>
+        <h3>{{ item.item_name }}</h3>
+        <p class="desc">{{ item.description|truncate(80) }}</p>
+        <ul class="meta">
+            <li>📍 {{ item.location }}</li>
+            <li>📅 {{ item.date_found }}</li>
+        </ul>
+        <a class="btn block" href="{{ url_for('details', item_id=item.id) }}">View Details</a>
+    </article>
+    {% endfor %}
+</div>
+
+{% if pages > 1 %}
+<nav class="pagination">
+    {% if page > 1 %}
+    <a href="{{ url_for('index', q=q, status=status, page=page-1) }}">&laquo; Prev</a>
+    {% endif %}
+    {% for p in range(1, pages + 1) %}
+    <a class="{{ 'current' if p == page }}" href="{{ url_for('index', q=q, status=status, page=p) }}">{{ p }}</a>
+    {% endfor %}
+    {% if page < pages %} <a href="{{ url_for('index', q=q, status=status, page=page+1) }}">Next &raquo;</a>
+        {% endif %}
+</nav>
+{% endif %}
+{% else %}
+<div class="panel center">
+    <h3>No items found</h3>
+    <p class="muted">Try a different search or filter.</p>
+</div>
+{% endif %}
+{% endblock %}

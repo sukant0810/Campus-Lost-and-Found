@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel auth-panel">
+    <h2>Welcome back</h2>
+    <p class="muted">Login to report and manage campus items.</p>
+    <form method="post">
+        <label>Username
+            <input type="text" name="username" required autofocus>
+        </label>
+        <label>Password
+            <input type="password" name="password" required>
+        </label>
+        <button class="btn block" type="submit">Login</button>
+    </form>
+    <p class="muted switch">New user? <a href="{{ url_for('signup') }}">Sign up</a></p>
+</div>
+{% endblock %}

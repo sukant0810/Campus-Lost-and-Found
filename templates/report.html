@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel form-panel">
+    <span class="badge {{ kind }}">{{ kind|title }}</span>
+    <h2>Report {{ kind|title }} Item</h2>
+    <p class="muted">Fill in the details below. All fields are required.</p>
+    <form method="post" novalidate>
+        <div class="form-grid">
+            <label>Item Name
+                <input type="text" name="item_name" value="{{ form.item_name or '' }}" required>
+            </label>
+            <label>Category
+                <select name="category" required>
+                    <option value="">Select category</option>
+                    {% for c in categories %}
+                    <option value="{{ c }}" {% if form.category==c %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label class="full">Description
+                <textarea name="description" rows="3" required>{{ form.description or '' }}</textarea>
+            </label>
+            <label>Location {{ 'Lost' if kind == 'lost' else 'Found' }}
+                <input type="text" name="location" value="{{ form.location or '' }}" required>
+            </label>
+            <label>Date {{ 'Lost' if kind == 'lost' else 'Found' }}
+                <input type="date" name="date_found" max="{{ today }}" value="{{ form.date_found or today }}" required>
+            </label>
+            <label>{{ 'Your Name' if kind == 'lost' else 'Finder Name' }}
+                <input type="text" name="owner_name" value="{{ form.owner_name or '' }}" required>
+            </label>
+            <label>Contact (email or phone)
+                <input type="text" name="contact" value="{{ form.contact or '' }}" required>
+            </label>
+            {% if kind == 'found' %}
+            <div class="full verify-box">
+                <strong>🔒 Ownership verification (optional)</strong>
+                <p class="muted">Ask a question only the real owner can answer. The answer is visible to the admin only.
+                </p>
+                <label>Verification Question
+                    <input type="text" name="verify_question" maxlength="150"
+                        placeholder="e.g. What is the phone wallpaper?" value="{{ form.verify_question or '' }}">
+                </label>
+                <label>Correct Answer
+                    <input type="text" name="verify_answer" maxlength="100" placeholder="e.g. Blue mountain"
+                        value="{{ form.verify_answer or '' }}">
+                </label>
+            </div>
+            {% endif %}
+        </div>
+        <div class="actions">
+            <button class="btn" type="submit">Submit Report</button>
+            <a class="btn secondary" href="{{ url_for('index') }}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

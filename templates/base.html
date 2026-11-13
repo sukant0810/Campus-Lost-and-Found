@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Campus Lost &amp; Found</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container nav-bar">
+            <a class="brand" href="{{ url_for('index') }}">🎓 Campus <span>Lost &amp; Found</span></a>
+            {% if session.get('logged_in') %}
+            <nav class="nav-links">
+                <a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' }}">Home</a>
+                <a href="{{ url_for('report', kind='lost') }}"
+                    class="{{ 'active' if request.view_args and request.view_args.get('kind') == 'lost' }}">Report
+                    Lost</a>
+                <a href="{{ url_for('report', kind='found') }}"
+                    class="{{ 'active' if request.view_args and request.view_args.get('kind') == 'found' }}">Report
+                    Found</a>
+                <a href="{{ url_for('logout') }}" class="nav-logout">Logout</a>
+            </nav>
+            {% endif %}
+        </div>
+    </header>
+
+    {% block hero %}{% endblock %}
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <div class="alert {{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endwith %}
+        {% if not_found %}
+        <div class="panel center">
+            <h2>Page not found</h2>
+            <p class="muted">The page you are looking for does not exist.</p>
+            <a class="btn" href="{{ url_for('index') }}">Back to Home</a>
+        </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">Campus Lost &amp; Found Management System &middot;</div>
+    </footer>
+</body>
+
+</html>

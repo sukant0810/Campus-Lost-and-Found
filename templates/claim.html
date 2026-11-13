@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel form-panel">
+    <span class="badge found">Found</span>
+    <h2>Claim: {{ item.item_name }}</h2>
+    <p class="muted">Answer the verification question below. The admin will check your answer before returning the item.
+    </p>
+    <div class="verify-box">
+        <strong>🔒 Verification question</strong>
+        <p>{{ question }}</p>
+    </div>
+    <form method="post" novalidate>
+        <label>Your Answer
+            <textarea name="answer" rows="3" maxlength="200" required>{{ form.answer or '' }}</textarea>
+        </label>
+        <div class="form-grid">
+            <label>Your Name
+                <input type="text" name="claimant_name" value="{{ form.claimant_name or '' }}" required>
+            </label>
+            <label>Contact (email or phone)
+                <input type="text" name="contact" value="{{ form.contact or '' }}" required>
+            </label>
+        </div>
+        <div class="actions">
+            <button class="btn" type="submit">Submit Claim</button>
+            <a class="btn secondary" href="{{ url_for('details', item_id=item.id) }}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

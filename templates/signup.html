@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel auth-panel">
+    <h2>Create account</h2>
+    <p class="muted">Sign up to start using Campus Lost &amp; Found.</p>
+    <form method="post">
+        <label>Username
+            <input type="text" name="username" required autofocus>
+        </label>
+        <label>Password
+            <input type="password" name="password" minlength="6" required>
+        </label>
+        <label>Confirm Password
+            <input type="password" name="confirm" minlength="6" required>
+        </label>
+        <button class="btn block" type="submit">Create Account</button>
+    </form>
+    <p class="muted switch">Already registered? <a href="{{ url_for('login') }}">Login</a></p>
+</div>
+{% endblock %}
